@@ -7,5 +7,5 @@ import org.example.application.Application;
 @Setter
 public abstract class Controller {
 
-    private Application application;
+    protected Application application;
 }
