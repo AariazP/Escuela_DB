@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,18 +27,33 @@ public class LoginController extends Controller {
          * Importante:
          * si se ingresa dentro de algún campo de texto este mensaje
          * se producirá un sql injection
-         * ' OR nombre='Alejandro' -- con un espacio al final
+         * en el user: ' OR '1'='1
+         * en el password: ' OR '1'='1
          * esto es un ejemplo de sql injection suponiendo que el usuario Alejandro existe
          */
         try {
-            if (connection.iniciarSesion("SELECT * FROM administradores WHERE nombre='" + txtUsuario.getText() + "' AND telefono='" + txtContrasenia.getText() + "'")) {
+            if (connection.iniciarSesion("SELECT * FROM administradores WHERE user='" + txtUsuario.getText() + "' AND password='" + txtContrasenia.getText() + "'")) {
+
+                if(txtUsuario.getText().contains("OR")){
+                    alertMessage("Haz hackeado la base de datos, felicidades");
+                }
                 application.setScene(Utils.rutaAdministrador);
             } else {
-                System.out.println("Usuario o contraseña incorrectos");
+                alertMessage("Usuario o contraseña incorrectos");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    void alertMessage(String message){
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+
     }
 
 }
